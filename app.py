@@ -6,7 +6,14 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
+# ── State Management & Query Params ───────────────────────────────────────────
+# Check if a module was clicked from the home page cards
+params = st.query_params
+if "module" in params:
+    # Save the clicked module number (e.g., '01', '02') to session state
+    st.session_state.current_module = params["module"]
+    # Clear the parameter so it doesn't get stuck in the URL
+    st.query_params.clear()
 # ── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -144,12 +151,15 @@ for i, (num, icon, title, desc, level) in enumerate(modules):
                    "Advanced": "#fde68a ; color:#92400e",
                    "Assessment": "#f3e8ff ; color:#6b21a8"}[level]
     with cols[i % 2]:
+        # WRAPPED THE DIV IN AN <a> TAG POINTING TO /?module=...
         st.markdown(f"""
-        <div class="module-card">
-          <div class="badge" style="background:{badge_color};">{level}</div>
-          <h4>{icon} {num}. {title}</h4>
-          <p>{desc}</p>
-        </div>""", unsafe_allow_html=True)
+        <a href="/?module={num}" target="_self" style="text-decoration: none; color: inherit; display: block;">
+            <div class="module-card">
+              <div class="badge" style="background:{badge_color};">{level}</div>
+              <h4>{icon} {num}. {title}</h4>
+              <p>{desc}</p>
+            </div>
+        </a>""", unsafe_allow_html=True)
 
 st.markdown("---")
 
